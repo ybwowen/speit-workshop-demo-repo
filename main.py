@@ -28,7 +28,7 @@ st.set_page_config(
     layout="centered",
 )
 
-st.title("WSL + Git + 环境配置 Workshop Demo")
+st.title("SPEIT Workshop Demo")
 st.caption("如果你能看到这个页面，说明 git clone、conda、pip、streamlit 这条链路已经跑通。")
 
 student_name = st.text_input("输入你的名字", "Student")
@@ -64,8 +64,3 @@ st.markdown(
 if st.button("点我放烟花"):
     st.balloons()
     st.info("如果你能看到这个效果，说明代码修改和页面交互都正常。")
-
-st.subheader("为什么这个项目适合教学")
-st.write(
-    "它故意只有一个入口文件和一个依赖清单，方便初学者把注意力放在环境搭建、命令理解和 Git 基本流程上。"
-)

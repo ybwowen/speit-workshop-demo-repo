@@ -2,7 +2,7 @@
 
 这个仓库故意设计成很小，但安装流程故意完整走一遍：
 
-`apt -> git clone -> conda -> pip -> streamlit run`
+`apt / brew -> git clone -> conda -> pip -> streamlit run`
 
 ## 仓库结构
 
@@ -22,7 +22,7 @@
 
 如果这四件事混在一起，后面很容易出错。
 
-## 在 WSL / MacOS 里安装基础工具
+## 在 WSL / Ubuntu 里安装基础工具
 
 先把系统工具装好，这一步明确使用 `apt`。
 
@@ -39,6 +39,23 @@ sudo apt install -y git curl wget
 - 没有 `wget`，你不方便下载 Miniconda
 - 没有 `curl`，你不方便检查服务端口
 
+## 在 macOS 里安装基础工具
+
+macOS 没有 `apt`，这里应该使用 Homebrew。
+
+命令：
+
+```bash
+brew install git wget
+```
+
+如果你只是想检查端口，`curl` 一般已经自带。
+
+为什么：
+
+- 在 macOS 上，命令行开发工具通常优先由 `brew` 管理
+- 不要把 Linux 的 `apt` 命令直接复制到 macOS 终端
+
 ## 克隆这个仓库
 
 代码应该来自远程仓库，而不是手工复制粘贴文件。
@@ -48,8 +65,8 @@ sudo apt install -y git curl wget
 ```bash
 mkdir -p ~/projects
 cd ~/projects
-git clone https://github.com/your-org/wsl-git-python-workshop-demo.git
-cd wsl-git-python-workshop-demo
+git clone https://github.com/ybwowen/speit-workshop-demo-repo.git
+cd speit-workshop-demo-repo
 ```
 
 为什么：
@@ -59,12 +76,14 @@ cd wsl-git-python-workshop-demo
 如果你已经拿到了老师发的整个 `workshop-package/` 文件夹，也可以直接进入本地目录先跑：
 
 ```bash
-cd <path-to-workshop-package>/demo-repo
+cd <path-to-workshop-package>/speit-workshop-demo-repo
 ```
 
 ## 安装 Miniconda
 
 这个项目推荐用 conda 创建独立环境，不建议直接污染系统 Python。
+
+### WSL / Ubuntu
 
 命令：
 
@@ -76,6 +95,37 @@ source ~/.bashrc
 conda --version
 ```
 
+### macOS Apple Silicon
+
+先确认架构：
+
+```bash
+uname -m
+```
+
+如果输出是 `arm64`，执行：
+
+```bash
+cd ~
+curl -LO https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-arm64.sh
+bash Miniconda3-latest-MacOSX-arm64.sh
+source ~/.zshrc
+conda --version
+```
+
+### macOS Intel
+
+如果 `uname -m` 输出是 `x86_64`，执行：
+
+```bash
+cd ~
+curl -LO https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+bash Miniconda3-latest-MacOSX-x86_64.sh
+source ~/.zshrc
+conda --version
+```
+
+如果你的 shell 不是 `zsh`，把 `source ~/.zshrc` 换成对应 shell 的配置文件。
 
 不同项目可能需要不同 Python 版本。conda 的价值就是隔离环境。
 
@@ -146,6 +196,7 @@ python --version
 命令：
 
 ```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -410,22 +461,59 @@ ping -c 2 github.com
 
 如果 GitHub 网络不稳定，直接使用讲师提供的 zip 包继续课堂。
 
-## 11. 课堂不翻车建议
+## 离线资源
 
-如果你是讲师，建议你额外准备：
+下面这些离线资源只是 backup。优先级永远是：
 
-- 一个本地 `Miniconda3-latest-Linux-x86_64.sh`
-- 一个 `demo-repo.zip`
-- 一个本地 `wheelhouse/`
+1. 先按上面的正常在线流程安装和运行
+2. 只有在 GitHub、PyPI 或 Miniconda 下载失败时，才切到离线资源
 
-提前下载 Python 依赖的方法：
+请看上一级目录中的 `offline-assets/`：
+
+- `speit-workshop-demo-repo.zip`
+- `Miniconda3-latest-Linux-x86_64.sh`
+- `wheelhouse/`
+
+### WSL / Ubuntu 兜底流程
+
+这条路径我已经实际执行验证过，可以作为课堂 backup 使用。
+
+#### 情况 1：GitHub 不通
+
+直接解压离线 zip：
 
 ```bash
-pip download -r requirements.txt -d wheelhouse
+cd <path-to-workshop-package>/offline-assets
+unzip speit-workshop-demo-repo.zip
+cd speit-workshop-demo-repo
 ```
 
-离线安装方法：
+#### 情况 2：Miniconda 下载失败
+
+直接使用本地安装包。为了避免交互式安装卡住，推荐这样执行：
 
 ```bash
-pip install --no-index --find-links=wheelhouse -r requirements.txt
+cd <path-to-workshop-package>/offline-assets
+bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/miniconda3-offline
 ```
+
+#### 情况 3：`pip install` 很慢或失败
+
+这条兜底路径默认直接使用离线安装器自带的 base 环境，不再额外 `conda create` 新环境：
+
+```bash
+~/miniconda3-offline/bin/python -m pip install --no-index --find-links=<path-to-workshop-package>/offline-assets/wheelhouse -r <path-to-workshop-package>/speit-workshop-demo-repo/requirements.txt
+~/miniconda3-offline/bin/streamlit run <path-to-workshop-package>/speit-workshop-demo-repo/main.py
+```
+
+如果你已经在正常流程里装好了 Miniconda，只是 `pip` 失败，也可以在你当前环境里只使用离线 `wheelhouse`：
+
+```bash
+python -m pip install --no-index --find-links=<path-to-workshop-package>/offline-assets/wheelhouse -r requirements.txt
+```
+
+### 注意事项
+
+- 这里的离线资产默认是给 WSL / Ubuntu 准备的
+- 上面这条 backup 路径默认直接使用 Miniconda base 环境
+- macOS 如需完全离线安装，需要单独准备对应平台的安装包和 wheels
