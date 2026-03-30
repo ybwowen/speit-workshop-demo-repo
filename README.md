@@ -58,8 +58,6 @@ brew install git wget
 
 ## 克隆这个仓库
 
-代码应该来自远程仓库，而不是手工复制粘贴文件。
-
 命令：
 
 ```bash
@@ -72,12 +70,6 @@ cd speit-workshop-demo-repo
 为什么：
 
 这一步让你真实体验工程项目的起点：先把代码拿到本地。
-
-如果你已经拿到了老师发的整个 `workshop-package/` 文件夹，也可以直接进入本地目录先跑：
-
-```bash
-cd <path-to-workshop-package>/speit-workshop-demo-repo
-```
 
 ## 安装 Miniconda
 
@@ -219,23 +211,9 @@ streamlit run main.py
 
 为什么：
 
-如果浏览器成功打开页面，说明你的整条链路已经通了。
+如果浏览器成功打开页面，恭喜你，你的整条链路已经通了！
 
-## 验证项目是否真的跑起来
-
-解释：
-
-有时候浏览器没弹出，但服务其实已经启动了。
-
-命令：
-
-```bash
-curl -I http://127.0.0.1:8501
-```
-
-为什么：
-
-这是最简单的服务存活检查。
+在 VScode 中，一般会有自动端口转发，可以直接在系统（无论 Windows 还是 MacOS）的浏览器中查看。
 
 ## 课堂练习
 
@@ -331,10 +309,6 @@ git pull
 
 - `push`：把本地提交发到远程
 - `pull`：把远程更新拿到本地
-
-课堂提醒：
-
-如果你 clone 的是老师的仓库，你通常没有 push 权限。这一步更适合老师演示。
 
 #### 练习 5：理解 cherry-pick
 
@@ -474,10 +448,6 @@ ping -c 2 github.com
 - `Miniconda3-latest-Linux-x86_64.sh`
 - `wheelhouse/`
 
-### WSL / Ubuntu 兜底流程
-
-这条路径我已经实际执行验证过，可以作为课堂 backup 使用。
-
 #### 情况 1：GitHub 不通
 
 直接解压离线 zip：
@@ -514,6 +484,6 @@ python -m pip install --no-index --find-links=<path-to-workshop-package>/offline
 
 ### 注意事项
 
-- 这里的离线资产默认是给 WSL / Ubuntu 准备的
+- 这里的 offline assets 默认是给 WSL / Ubuntu 准备的
 - 上面这条 backup 路径默认直接使用 Miniconda base 环境
 - macOS 如需完全离线安装，需要单独准备对应平台的安装包和 wheels
